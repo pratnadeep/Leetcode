@@ -1,0 +1,28 @@
+import java.util.Arrays;
+
+class Solution {
+    public int eliminateMaximum(int[] dist, int[] speed) {
+        int n = dist.length;
+        double[] arrivalTimes = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            // arrival = distance / speed
+            arrivalTimes[i] = (double) dist[i] / speed[i];
+        }
+
+        // Sort so we kill the one arriving soonest
+        Arrays.sort(arrivalTimes);
+
+        int eliminated = 0;
+        for (int i = 0; i < n; i++) {
+            // i represents the minute we are ready to fire (0, 1, 2...)
+            // If the monster arrives AT or BEFORE our firing time, we lose.
+            if (arrivalTimes[i] <= i) {
+                break; 
+            }
+            eliminated++;
+        }
+
+        return eliminated;
+    }
+}
