@@ -1,0 +1,47 @@
+class Solution {
+    public String minWindow(String s, String t) {
+        if (s.length() < t.length()) return "";
+
+        // 1. Build the frequency map (Our Shopping List)
+        Map<Character, Integer> cc = new HashMap<>();
+        for (char ch : t.toCharArray()) {
+            cc.put(ch, cc.getOrDefault(ch, 0) + 1);
+        }
+
+        int target = t.length();
+        int[] mw = {0, Integer.MAX_VALUE};
+        int start = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+
+            // 2. Expand: If this char is needed, decrement target
+            if (cc.getOrDefault(ch, 0) > 0) {
+                target--;
+            }
+            cc.put(ch, cc.getOrDefault(ch, 0) - 1);
+
+            // 3. Shrink: Only enter when window is valid (target == 0)
+            if (target == 0) {
+                // Shrink as long as the start character is "extra" (count < 0)
+                while (cc.get(s.charAt(start)) < 0) {
+                    cc.put(s.charAt(start), cc.get(s.charAt(start)) + 1);
+                    start++;
+                }
+
+                // 4. Update the best window found so far
+                if (i - start < mw[1] - mw[0]) {
+                    mw[0] = start;
+                    mw[1] = i;
+                }
+
+                // 5. Break the window to keep searching
+                cc.put(s.charAt(start), cc.get(s.charAt(start)) + 1);
+                target++;
+                start++;
+            }
+        }
+
+        return mw[1] == Integer.MAX_VALUE ? "" : s.substring(mw[0], mw[1] + 1);
+    }
+}
